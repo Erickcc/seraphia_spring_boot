@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 
 @Entity
@@ -40,16 +41,20 @@ public class Products {
     @Column(name = "is_available", nullable = false)
     private Integer isAvailable = 1;
 
-//    @ManyToOne
-//    @JoinColumn(name = "size_id")
-//    private Sizes size;
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private Sizes size;
 
     @ManyToOne
     @JoinColumn(name = "color_id")
-    @JsonBackReference //Tells this entity that it doesnt need to serialize the parent
+//    @JsonIgnore
+//    @JsonBackReference //Tells this entity that it doesnt need to serialize the parent
     private Colors color;
 
-//    @ManyToOne
-//    @JoinColumn(name = "category_id")
-//    private Categories category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Categories category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Images> imagesList;
 }

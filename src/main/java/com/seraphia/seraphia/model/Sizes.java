@@ -23,9 +23,10 @@ public class Sizes {
     private Long id;
 
     //size_name
-    @Column(name = "size_name", nullable = false)
+    @Column(name = "size_name", nullable = false, unique = true)
     private String sizeName;
 
-//    @OneToMany(mappedBy = "size", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Products> productsList;
+    @OneToMany(mappedBy = "size", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Products> productsList;
 }

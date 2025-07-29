@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ColorsRepository extends JpaRepository<Colors, Long> {
-    Optional<Colors> findByColorNameContaining(String color);
+    Optional<Colors> findByColorNameIs(String color);
 }

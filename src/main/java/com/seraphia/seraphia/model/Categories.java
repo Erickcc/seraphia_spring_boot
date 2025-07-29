@@ -1,5 +1,6 @@
 package com.seraphia.seraphia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,9 +23,10 @@ public class Categories {
     private Long id;
 
     //category_name
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName;
 
-//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Products> productsList;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Products> productsList;
 }

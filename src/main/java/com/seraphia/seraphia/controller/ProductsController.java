@@ -1,6 +1,8 @@
 package com.seraphia.seraphia.controller;
 
-import com.seraphia.seraphia.model.Colors;
+import com.seraphia.seraphia.dto.ColorSizeCategoryRequest;
+import com.seraphia.seraphia.dto.ImagenRequest;
+import com.seraphia.seraphia.model.Images;
 import com.seraphia.seraphia.model.Products;
 import com.seraphia.seraphia.service.ProductsService;
 import lombok.AllArgsConstructor;
@@ -39,8 +41,28 @@ public class ProductsController {
         return productsService.updateProductById(id, productUpdated);
     }
 
-    @PostMapping(path = "{productId}/add-color")
-    public Products addProductColor(@PathVariable("productId") Long id, @RequestBody String newColor) {
-        return productsService.addProductColor(id, newColor);
+//    @PostMapping(path = "{productId}/add-color")
+//    public Products addProductColor(@PathVariable("productId") Long id, @RequestBody String newColor) {
+//        return productsService.addProductColor(id, newColor);
+//    }
+//
+//    @PostMapping(path = "{productId}/add-size")
+//    public Products addProductSize(@PathVariable("productId") Long id, @RequestBody String newSize) {
+//        return productsService.addProductSize(id, newSize);
+//    }
+//
+//    @PostMapping(path = "{productId}/add-category")
+//    public Products addProductCategory(@PathVariable("productId") Long id, @RequestBody String newCategory) {
+//        return productsService.addProductCategory(id, newCategory);
+//    }
+
+    @PostMapping(path = "{productId}/add-color-size-category")
+    public Products addColorSizeCategoryToProduct(@PathVariable("productId") Long id, @RequestBody ColorSizeCategoryRequest colorSizeCategoryRequest) {
+        return productsService.addColorSizeCategoryToProduct(id, colorSizeCategoryRequest);
+    }
+
+    @PostMapping(path = "{productId}/add-images")
+    public Products addImagesToProduct(@PathVariable("productId") Long id, @RequestBody ImagenRequest newImages) {
+        return productsService.addImagesToProduct(id, newImages);
     }
 }

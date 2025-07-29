@@ -1,6 +1,7 @@
 package com.seraphia.seraphia.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,10 +23,11 @@ public class Colors {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "color_name", nullable = false)
+    @Column(name = "color_name", nullable = false, unique = true)
     private String colorName;
 
     @OneToMany(mappedBy = "color", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference //Parent in charge of serialize, prevent child from trying to serializing parent
+    @JsonIgnore
+//    @JsonManagedReference //Parent in charge of serialize, prevent child from trying to serializing parent
     private List<Products> productsList;
 }
