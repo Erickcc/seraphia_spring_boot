@@ -1,8 +1,7 @@
 package com.seraphia.seraphia.service;
 
 import com.seraphia.seraphia.dto.ColorSizeCategoryRequest;
-import com.seraphia.seraphia.dto.ImagenRequest;
-import com.seraphia.seraphia.model.Images;
+import com.seraphia.seraphia.dto.ImagesRequest;
 import com.seraphia.seraphia.model.Products;
 
 import java.util.List;
@@ -26,5 +25,5 @@ public interface ProductsService {
 
     Products addColorSizeCategoryToProduct(Long id, ColorSizeCategoryRequest colorSizeCategoryRequest);
 
-    Products addImagesToProduct(Long id, ImagenRequest newImages);
+    Products addImagesToProduct(Long id, ImagesRequest newImages);
 }

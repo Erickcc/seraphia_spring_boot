@@ -1,18 +1,18 @@
 package com.seraphia.seraphia.service;
 
 import com.seraphia.seraphia.dto.ColorSizeCategoryRequest;
-import com.seraphia.seraphia.dto.ImagenRequest;
+import com.seraphia.seraphia.dto.ImagesRequest;
 import com.seraphia.seraphia.model.*;
 import com.seraphia.seraphia.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @AllArgsConstructor
 public class ProductsServiceImpl implements ProductsService {
     private final ProductsRepository productsRepository;
@@ -140,11 +140,13 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public Products addImagesToProduct(Long id, ImagenRequest newImages) {
+    public Products addImagesToProduct(Long id, ImagesRequest newImages) {
         Optional<Products> optionalProduct = productsRepository.findById(id);
         if (optionalProduct.isEmpty()) throw new IllegalArgumentException("El producto con el id " + id + " no existe");
         Products originalProduct = optionalProduct.get();
         List<Images> originalImages = newImages.getImages();
+
+        if (!originalImages.isEmpty()) imagesRepository.deleteByProductId(id);
 
         for (Images image : originalImages) {
             if (image.getImageUrl() != null && image.getImageOrder() != null) {

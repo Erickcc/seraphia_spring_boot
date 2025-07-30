@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 //http://localhost:8080/api/categories
+@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping(path = "api/categories")
 @AllArgsConstructor

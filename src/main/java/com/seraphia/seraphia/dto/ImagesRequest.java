@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ImagenRequest {
+public class ImagesRequest {
     //    private String imageUrl;
 //    private Integer imageOrder;
     private List<Images> images;

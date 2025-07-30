@@ -1,8 +1,7 @@
 package com.seraphia.seraphia.controller;
 
 import com.seraphia.seraphia.dto.ColorSizeCategoryRequest;
-import com.seraphia.seraphia.dto.ImagenRequest;
-import com.seraphia.seraphia.model.Images;
+import com.seraphia.seraphia.dto.ImagesRequest;
 import com.seraphia.seraphia.model.Products;
 import com.seraphia.seraphia.service.ProductsService;
 import lombok.AllArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping(path = "api/products")
 @AllArgsConstructor
@@ -62,7 +62,7 @@ public class ProductsController {
     }
 
     @PostMapping(path = "{productId}/add-images")
-    public Products addImagesToProduct(@PathVariable("productId") Long id, @RequestBody ImagenRequest newImages) {
+    public Products addImagesToProduct(@PathVariable("productId") Long id, @RequestBody ImagesRequest newImages) {
         return productsService.addImagesToProduct(id, newImages);
     }
 }

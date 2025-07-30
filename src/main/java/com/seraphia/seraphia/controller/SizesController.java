@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping(path = "api/sizes")
 @AllArgsConstructor
