@@ -19,11 +19,11 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
-    private Long userId;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
     @Column(name = "creation_date", nullable = false)
     private String creationDate;
@@ -35,9 +35,8 @@ public class Cart {
     @JsonManagedReference
     private List<CartItem> items = new ArrayList<>();
 
-    // Constructor adicional para inicializar fechas al crear un nuevo Cart
-    public Cart(Long userId) {
-        this.userId = userId;
+    public Cart(User user) {
+        this.user = user;
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
         this.creationDate = now;
         this.modificationDate = now;
