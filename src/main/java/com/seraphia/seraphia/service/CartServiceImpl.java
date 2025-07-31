@@ -1,10 +1,14 @@
 package com.seraphia.seraphia.service;
 
 import com.seraphia.seraphia.model.Cart;
+import com.seraphia.seraphia.model.User;
 import com.seraphia.seraphia.repository.CartRepository;
+import com.seraphia.seraphia.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -12,16 +16,21 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+    private final UserRepository userRepository;
+
     @Override
     public Cart createCart(Long userId) {
-        Cart cart = new Cart(userId); // Usa el constructor que inicializa las fechas
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (cartRepository.findByUserId(userId).isPresent()) {
+            throw new RuntimeException("El usuario ya tiene un carrito");
+        }
+
+        Cart cart = new Cart(user);
         return cartRepository.save(cart);
     }
-    @Override
-    public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("No se encontró un carrito para el usuario con ID " + userId));
-    }
+
     @Override
     public List<Cart> getAllCarts() {
         return cartRepository.findAll();
@@ -30,7 +39,13 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart getCartById(Long id) {
         return cartRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+    }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado para el usuario"));
     }
 
     @Override
@@ -40,17 +55,14 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart updateCartById(Long id, Cart updatedCart) {
-        Cart existingCart = cartRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado con ID: " + id));
-
-        existingCart.setUserId(updatedCart.getUserId());
-        return cartRepository.save(existingCart);
+        Cart existing = getCartById(id);
+        existing.setModificationDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        return cartRepository.save(existing);
     }
 
     @Override
     public Cart deleteCartById(Long id) {
-        Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Carrito no encontrado con ID: " + id));
+        Cart cart = getCartById(id);
         cartRepository.delete(cart);
         return cart;
     }
