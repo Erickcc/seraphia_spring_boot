@@ -3,8 +3,11 @@ package com.seraphia.seraphia.controller;
 import com.seraphia.seraphia.dto.UserLoginDTO;
 import com.seraphia.seraphia.dto.UserRegisterDTO;
 import com.seraphia.seraphia.dto.UserResponseDTO;
+import com.seraphia.seraphia.dto.LoginResponseDTO;
+import com.seraphia.seraphia.model.Cart;
 import com.seraphia.seraphia.model.User;
 import com.seraphia.seraphia.service.UserService;
+import com.seraphia.seraphia.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final CartService cartService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO dto) {
@@ -43,14 +47,20 @@ public class UserController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
-        UserResponseDTO responseDTO = new UserResponseDTO(
+        // Obtener o crear carrito asociado al usuario
+        Cart cart = cartService.getOrCreateCartByUserId(user.getId());
+
+        // Devolver información del usuario y su carrito
+        LoginResponseDTO responseDTO = new LoginResponseDTO(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                cart
         );
 
         return ResponseEntity.ok(responseDTO);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
