@@ -4,6 +4,8 @@ import com.seraphia.seraphia.dto.UserLoginDTO;
 import com.seraphia.seraphia.dto.UserRegisterDTO;
 import com.seraphia.seraphia.dto.UserResponseDTO;
 import com.seraphia.seraphia.dto.LoginResponseDTO;
+import com.seraphia.seraphia.dto.CartDTO;
+import com.seraphia.seraphia.dto.CartItemDTO;
 import com.seraphia.seraphia.model.Cart;
 import com.seraphia.seraphia.model.User;
 import com.seraphia.seraphia.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.List;
 
 @CrossOrigin("http://localhost:8080") // Permitir llamadas desde frontend
 @RestController
@@ -47,19 +50,31 @@ public class UserController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
-        // Obtener o crear carrito asociado al usuario
         Cart cart = cartService.getOrCreateCartByUserId(user.getId());
 
-        // Devolver información del usuario y su carrito
+        // Convertimos CartItem → CartItemDTO
+        List<CartItemDTO> cartItemsDTO = cart.getItems().stream().map(item ->
+                new CartItemDTO(
+                        item.getId(),
+                        item.getProduct().getId(),
+                        item.getColor().getId(),
+                        item.getSize().getId(),
+                        item.getQuantity()
+                )
+        ).toList();
+
+        CartDTO cartDTO = new CartDTO(cart.getId(), cartItemsDTO);
+
         LoginResponseDTO responseDTO = new LoginResponseDTO(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                cart
+                cartDTO
         );
 
         return ResponseEntity.ok(responseDTO);
     }
+
 
 
     @GetMapping("/{id}")

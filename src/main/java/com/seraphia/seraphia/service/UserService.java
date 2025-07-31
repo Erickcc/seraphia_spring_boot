@@ -12,8 +12,9 @@ public interface UserService {
 
     Optional<User> getUserById(Long id);
 
-    // Otros métodos que consideres necesarios
     User updateUser(Long id, User updatedUser);
 
     boolean deleteUser(Long id);
+
+    boolean existsById(Long id);
 }

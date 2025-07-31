@@ -5,10 +5,10 @@ import com.seraphia.seraphia.model.Cart;
 import com.seraphia.seraphia.model.User;
 import com.seraphia.seraphia.repository.CartRepository;
 import com.seraphia.seraphia.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -20,21 +20,23 @@ public class UserServiceImpl implements UserService {
     private final CartRepository cartRepository;
 
     @Override
-    public User registerUser(UserRegisterDTO userRegisterDTO) {
-        Optional<User> existingUser = userRepository.findByEmail(userRegisterDTO.getEmail());
+    public User registerUser(UserRegisterDTO dto) {
+        Optional<User> existingUser = userRepository.findByEmail(dto.getEmail());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
 
         User newUser = new User();
-        newUser.setName(userRegisterDTO.getName());
-        newUser.setPhone(userRegisterDTO.getPhone());
-        newUser.setEmail(userRegisterDTO.getEmail());
-        newUser.setPassword(userRegisterDTO.getPassword()); // En producción, encriptar la contraseña
+        newUser.setName(dto.getName());
+        newUser.setPhone(dto.getPhone());
+        newUser.setEmail(dto.getEmail());
+        newUser.setPassword(dto.getPassword()); // En producción: encriptar
 
         User savedUser = userRepository.save(newUser);
 
-        Cart cart = new Cart(savedUser); // ✅ CORREGIDO: pasamos el objeto User, no el ID
+        // Crear carrito asociado
+        Cart cart = new Cart(savedUser);
+        savedUser.setCart(cart); // para la persistencia bidireccional
         cartRepository.save(cart);
 
         return savedUser;
@@ -52,27 +54,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long id, User updatedUser) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException("El usuario con el id " + id + " no existe");
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario con el id " + id + " no existe"));
 
-        User existingUser = optionalUser.get();
-
-        if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
-        if (updatedUser.getPhone() != null) existingUser.setPhone(updatedUser.getPhone());
+        if (updatedUser.getName() != null) user.setName(updatedUser.getName());
+        if (updatedUser.getPhone() != null) user.setPhone(updatedUser.getPhone());
         if (updatedUser.getEmail() != null) {
-            Optional<User> userWithEmail = userRepository.findByEmail(updatedUser.getEmail());
-            if (userWithEmail.isPresent() && !userWithEmail.get().getId().equals(id)) {
+            Optional<User> existing = userRepository.findByEmail(updatedUser.getEmail());
+            if (existing.isPresent() && !existing.get().getId().equals(id)) {
                 throw new IllegalArgumentException("El correo electrónico ya está en uso por otro usuario");
             }
-            existingUser.setEmail(updatedUser.getEmail());
+            user.setEmail(updatedUser.getEmail());
         }
-        if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(updatedUser.getPassword());
-        }
+        if (updatedUser.getPassword() != null) user.setPassword(updatedUser.getPassword());
 
-        return userRepository.save(existingUser);
+        return userRepository.save(user);
     }
 
     @Override
@@ -80,8 +76,16 @@ public class UserServiceImpl implements UserService {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("El usuario con el id " + id + " no existe");
         }
+
+        // Elimina primero el carrito si existe
         cartRepository.findByUserId(id).ifPresent(cartRepository::delete);
+
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
     }
 }

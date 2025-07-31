@@ -10,5 +10,5 @@ public class LoginResponseDTO {
     private Long id;
     private String name;
     private String email;
-    private Cart cart;
+    private CartDTO cart;
 }
