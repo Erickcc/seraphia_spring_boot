@@ -1,9 +1,9 @@
 package com.seraphia.seraphia.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +37,7 @@ public class Products {
     @Column(name = "stock", nullable = false)
     private Integer stock = 1;
 
-    @Column(name = "creation_date", nullable = false, columnDefinition = "date")
+    @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDate creationDate = LocalDate.now();
 
     @Column(name = "is_available", nullable = false)
