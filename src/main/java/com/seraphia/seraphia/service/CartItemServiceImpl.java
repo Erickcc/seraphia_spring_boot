@@ -12,32 +12,28 @@ import java.util.List;
 public class CartItemServiceImpl implements CartItemService {
 
     private final ProductsRepository productRepository;
-    private final ColorsRepository colorRepository;
-    private final SizesRepository sizeRepository;
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
 
     @Override
-    public CartItem addItemToCart(Long productId, Long colorId, Long sizeId, Long cartId, Integer quantity, String category) {
+    public CartItem addItemToCart(Long productId, Long cartId) {
         Products product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        Colors color = colorRepository.findById(colorId)
-                .orElseThrow(() -> new RuntimeException("Color no encontrado"));
-        Sizes size = sizeRepository.findById(sizeId)
-                .orElseThrow(() -> new RuntimeException("Talla no encontrada"));
+
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
         CartItem item = new CartItem();
         item.setProduct(product);
-        item.setColor(color);
-        item.setSize(size);
         item.setCart(cart);
-        item.setQuantity(quantity);
-        item.setCategory(category);
+        item.setColor(product.getColor());
+        item.setSize(product.getSize());
+        item.setQuantity(1);  // Siempre 1
+        item.setCategory(product.getCategory() != null ? product.getCategory().getCategoryName() : "N/A");
 
         return cartItemRepository.save(item);
     }
+
 
     @Override
     public List<CartItem> getCartItemsByUserId(Long userId) {

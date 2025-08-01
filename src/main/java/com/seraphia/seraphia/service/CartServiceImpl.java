@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -65,5 +66,18 @@ public class CartServiceImpl implements CartService {
         Cart cart = getCartById(id);
         cartRepository.delete(cart);
         return cart;
+    }
+
+    @Override
+    public Cart getOrCreateCartByUserId(Long userId) {
+        Optional<Cart> optionalCart = cartRepository.findByUserId(userId);
+        if (optionalCart.isPresent()) {
+            return optionalCart.get();
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            Cart newCart = new Cart(user);
+            return cartRepository.save(newCart);
+        }
     }
 }

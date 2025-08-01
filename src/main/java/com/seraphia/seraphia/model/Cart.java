@@ -1,5 +1,6 @@
 package com.seraphia.seraphia.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +24,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JsonBackReference(value = "user-cart")
     private User user;
 
     @Column(name = "creation_date", nullable = false)

@@ -3,13 +3,19 @@ package com.seraphia.seraphia.controller;
 import com.seraphia.seraphia.dto.UserLoginDTO;
 import com.seraphia.seraphia.dto.UserRegisterDTO;
 import com.seraphia.seraphia.dto.UserResponseDTO;
+import com.seraphia.seraphia.dto.LoginResponseDTO;
+import com.seraphia.seraphia.dto.CartDTO;
+import com.seraphia.seraphia.dto.CartItemDTO;
+import com.seraphia.seraphia.model.Cart;
 import com.seraphia.seraphia.model.User;
 import com.seraphia.seraphia.service.UserService;
+import com.seraphia.seraphia.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.List;
 
 @CrossOrigin("http://localhost:8080") // Permitir llamadas desde frontend
 @RestController
@@ -18,6 +24,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final CartService cartService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegisterDTO dto) {
@@ -43,14 +50,32 @@ public class UserController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
-        UserResponseDTO responseDTO = new UserResponseDTO(
+        Cart cart = cartService.getOrCreateCartByUserId(user.getId());
+
+        // Convertimos CartItem → CartItemDTO
+        List<CartItemDTO> cartItemsDTO = cart.getItems().stream().map(item ->
+                new CartItemDTO(
+                        item.getId(),
+                        item.getProduct().getId(),
+                        item.getColor().getId(),
+                        item.getSize().getId(),
+                        item.getQuantity()
+                )
+        ).toList();
+
+        CartDTO cartDTO = new CartDTO(cart.getId(), cartItemsDTO);
+
+        LoginResponseDTO responseDTO = new LoginResponseDTO(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                cartDTO
         );
 
         return ResponseEntity.ok(responseDTO);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
