@@ -6,9 +6,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -30,7 +33,7 @@ public class Products {
     private String description;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @Column(name = "stock", nullable = false)
     private Integer stock = 1;
@@ -57,4 +60,8 @@ public class Products {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Images> imagesList;
+
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Orders> orders = new HashSet<>();
 }
