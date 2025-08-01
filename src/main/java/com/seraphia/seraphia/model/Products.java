@@ -1,15 +1,14 @@
 package com.seraphia.seraphia.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +37,8 @@ public class Products {
     @Column(name = "stock", nullable = false)
     private Integer stock = 1;
 
-    @Column(name = "creation_date", nullable = false)
-    private String creationDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    @Column(name = "creation_date", nullable = false, columnDefinition = "date")
+    private LocalDate creationDate = LocalDate.now();
 
     @Column(name = "is_available", nullable = false)
     private Integer isAvailable = 1;
