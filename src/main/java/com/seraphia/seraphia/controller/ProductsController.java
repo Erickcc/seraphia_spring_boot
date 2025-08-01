@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("http://localhost:8080")
+@CrossOrigin
 @RestController
 @RequestMapping(path = "api/products")
 @AllArgsConstructor
@@ -19,6 +19,11 @@ public class ProductsController {
     @GetMapping
     public List<Products> getAllProducts() {
         return this.productsService.getAllProducts();
+    }
+
+    @GetMapping(path = "all/products-with-stock")
+    public List<Products> getAllProductsWithStock() {
+        return this.productsService.getAllProductsWithStock();
     }
 
     @GetMapping(path = "{productId}")

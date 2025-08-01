@@ -27,6 +27,11 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
+    public List<Products> getAllProductsWithStock() {
+        return productsRepository.findByStockGreaterThanEqual(1);
+    }
+
+    @Override
     public Products getProductById(Long id) {
         return productsRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("El producto con el id " + id + " no existe")
